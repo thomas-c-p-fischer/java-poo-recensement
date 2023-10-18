@@ -21,7 +21,7 @@ public class RecherchePopulationDepartementService extends MenuService {
 		String choix = scanner.nextLine();
 		
 		if (!NumberUtils.isDigits(choix)) {
-			throw new RuntimeException("Le département doit être un entier.");
+			throw new NumberFormatException("Votre saisie est incorrecte veuillez saisir un chiffre entier.");
 		}
 		
 		List<Ville> villes = rec.getVilles();

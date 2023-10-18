@@ -3,6 +3,10 @@ package fr.diginamic.recensement;
 import java.util.Scanner;
 
 import fr.diginamic.recensement.entites.Recensement;
+import fr.diginamic.recensement.exceptions.CodeDepartementException;
+import fr.diginamic.recensement.exceptions.IntMaxException;
+import fr.diginamic.recensement.exceptions.IntMinException;
+import fr.diginamic.recensement.exceptions.SaisieException;
 import fr.diginamic.recensement.services.RechercheDepartementsPlusPeuplees;
 import fr.diginamic.recensement.services.RecherchePopulationBorneService;
 import fr.diginamic.recensement.services.RecherchePopulationDepartementService;
@@ -25,8 +29,12 @@ public class Application {
 	 * Point d'entrée
 	 * 
 	 * @param args arguments (non utilisés ici)
+	 * @throws CodeDepartementException 
+	 * @throws IntMaxException 
+	 * @throws IntMinException 
+	 * @throws SaisieException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IntMinException, IntMaxException, CodeDepartementException, SaisieException {
 		Scanner scanner = new Scanner(System.in);
 
 		String filePath = ClassLoader.getSystemClassLoader().getResource("recensement.csv").getFile();
@@ -46,16 +54,23 @@ public class Application {
 
 			// Poser une question à l'utilisateur
 			String choixMenu = scanner.nextLine();
-
+			
 			// Conversion du choix utilisateur en int
 			choix = Integer.parseInt(choixMenu);
-
+			
 			// On exécute l'option correspondant au choix de l'utilisateur
 			switch (choix) {
 			case 1:
-				RecherchePopulationVilleService rechercheVille = new RecherchePopulationVilleService();
-				rechercheVille.traiter(recensement, scanner);
-				break;
+				while(true) {
+					try {
+						RecherchePopulationVilleService rechercheVille = new RecherchePopulationVilleService();
+						rechercheVille.traiter(recensement, scanner);
+						break;
+					}
+					catch(SaisieException e) {
+						System.err.println(e);
+					}
+				}
 			case 2:
 				RecherchePopulationDepartementService rechercheDept = new RecherchePopulationDepartementService();
 				rechercheDept.traiter(recensement, scanner);
@@ -65,13 +80,27 @@ public class Application {
 				rechercheRegion.traiter(recensement, scanner);
 				break;
 			case 4:
-				RecherchePopulationBorneService recherchePopBorne = new RecherchePopulationBorneService();
-				recherchePopBorne.traiter(recensement, scanner);
-				break;
+				while (true ) {
+					try {
+						RecherchePopulationBorneService recherchePopBorne = new RecherchePopulationBorneService();
+						recherchePopBorne.traiter(recensement, scanner);
+						break;
+					}
+					catch (IntMinException | IntMaxException | NumberFormatException | CodeDepartementException e) {
+						System.err.println(e);
+					}
+				}
 			case 5:
-				RechercheVillesPlusPeupleesDepartement rechercheVillesPlusPeupleesDepartement = new RechercheVillesPlusPeupleesDepartement();
-				rechercheVillesPlusPeupleesDepartement.traiter(recensement, scanner);
-				break;
+				while(true) {
+					try {
+						RechercheVillesPlusPeupleesDepartement rechercheVillesPlusPeupleesDepartement = new RechercheVillesPlusPeupleesDepartement();
+						rechercheVillesPlusPeupleesDepartement.traiter(recensement, scanner);
+						break;
+					}
+					catch(NumberFormatException e) {
+						System.err.println(e);
+					}
+				}
 			case 6:
 				RechercheVillesPlusPeupleesRegion rechercheVillesPlusPeupleesRegion = new RechercheVillesPlusPeupleesRegion();
 				rechercheVillesPlusPeupleesRegion.traiter(recensement, scanner);
